@@ -1,446 +1,507 @@
-const baseline = { y2026: 48, y2027: 61, y2028: 66 };
-const trades = [
+const FALLBACK = { wins: 50, losses: 53 };
+const ORIOLES_TEAM_ID = 110;
+const SEASON = 2026;
+const SIMULATIONS = 10000;
+
+/*
+  rosWar values are FanGraphs Depth Charts rest-of-season WAR as accessed
+  July 23, 2026. Taylor Ward's 1.0 value is derived from FanGraphs'
+  projected full-season WAR minus his year-to-date WAR.
+*/
+const calls = [
   {
-    "city": "Seattle",
-    "team": "Seattle Mariners",
-    "player": "Taylor Ward",
-    "type": "Sell",
-    "time": "July 30 · 9:12 a.m.",
-    "about": "Taylor Ward is a 32-year-old Orioles corner outfielder and designated hitter. He provides on-base ability and middle-of-the-order experience, but he is eligible for free agency after the season.",
-    "offer": [
-      "Seattle’s No. 11 prospect, a Double-A right-hander projected as a possible back-end starter",
-      "A lower-level middle infielder with offensive upside"
+    city: "Minnesota",
+    player: "Joe Ryan",
+    type: "Buy",
+    time: "July 29 · 10:18 a.m.",
+    about: "Ryan would give Baltimore a dependable, high-strikeout starter for the stretch run. FanGraphs Depth Charts projects him for 1.3 WAR over the rest of the season.",
+    offer: [
+      "Orioles receive RHP Joe Ryan",
+      "Twins receive an MLB-ready young player and two prospects"
     ],
-    "hard": "Trading Ward weakens Baltimore’s lineup during a playoff race. Keeping him preserves an established bat, but the Orioles could lose him after the season without receiving this prospect package.",
-    "question": "Do you turn a current Orioles regular into future pitching depth?",
-    "yes": "Trade Ward",
-    "no": "Keep Ward",
-    "yesImpact": [
-      -6,
-      5,
-      7
-    ],
-    "noImpact": [
-      4,
-      -2,
-      -3
-    ]
+    hard: "Ryan is one of the better starters plausibly available, so Minnesota can demand both immediate help and prospect value.",
+    question: "Do you pay a premium for a frontline starter?",
+    accept: "Acquire Ryan",
+    decline: "Pass on Ryan",
+    rosWar: 1.3,
+    acceptedSummary: "Acquired Joe Ryan",
+    declinedSummary: "Declined Minnesota’s price for Joe Ryan"
   },
   {
-    "city": "Miami",
-    "team": "Miami Marlins",
-    "player": "Anthony Bender",
-    "type": "Buy",
-    "time": "July 30 · 11:46 a.m.",
-    "about": "Anthony Bender is a Marlins right-handed reliever with a power sinker and a history of generating ground balls. Unlike many deadline bullpen options, he remains under club control through 2027.",
-    "offer": [
-      "Baltimore’s No. 7 prospect, a High-A position player with everyday upside",
-      "A young relief prospect"
+    city: "Los Angeles",
+    player: "Reid Detmers",
+    type: "Buy",
+    time: "July 29 · 3:42 p.m.",
+    about: "Detmers is a controllable left-handed starter with bat-missing ability and an uneven track record. FanGraphs Depth Charts projects roughly 1.1 WAR over the rest of the season.",
+    offer: [
+      "Orioles receive LHP Reid Detmers",
+      "Angels receive two prospects ranked among Baltimore’s top 15"
     ],
-    "hard": "Bender could help in two playoff races, but relievers are volatile. Baltimore would surrender a meaningful position-player prospect for a pitcher who might work only one inning at a time.",
-    "question": "Do you pay a premium for a controllable late-inning arm?",
-    "yes": "Acquire Bender",
-    "no": "Decline the deal",
-    "yesImpact": [
-      6,
-      5,
-      -5
-    ],
-    "noImpact": [
-      -2,
-      -2,
-      4
-    ]
+    hard: "The Orioles would be buying upside and control rather than certainty. The prospect price reflects the years beyond 2026.",
+    question: "Do you bet on Detmers’ upside?",
+    accept: "Acquire Detmers",
+    decline: "Keep the prospects",
+    rosWar: 1.1,
+    acceptedSummary: "Acquired Reid Detmers",
+    declinedSummary: "Passed on Reid Detmers"
   },
   {
-    "city": "Detroit",
-    "team": "Detroit Tigers",
-    "player": "Tarik Skubal",
-    "type": "Blockbuster",
-    "time": "July 31 · 8:03 a.m.",
-    "about": "Tarik Skubal is the Tigers’ ace and one of baseball’s best starting pitchers. He would immediately become Baltimore’s Game 1 starter in a postseason series, but he can become a free agent after the season.",
-    "offer": [
-      "Jackson Holliday",
-      "Baltimore’s No. 4 prospect",
-      "An MLB-ready young starting pitcher"
+    city: "San Diego",
+    player: "Mason Miller",
+    type: "Blockbuster",
+    time: "July 30 · 8:06 a.m.",
+    about: "Miller is an elite late-inning weapon with premium velocity and multiple years of control. FanGraphs Depth Charts projects 1.1 rest-of-season WAR.",
+    offer: [
+      "Orioles receive RHP Mason Miller",
+      "Padres receive a top-five Orioles prospect, a second top-15 prospect and a young major leaguer"
     ],
-    "hard": "No player in this game raises Baltimore’s immediate ceiling more. No deal costs more future value, either.",
-    "question": "Do you sacrifice a major portion of the young core for one run with an ace?",
-    "yes": "Go all in for Skubal",
-    "no": "Reject the price",
-    "yesImpact": [
-      18,
-      -15,
-      -18
-    ],
-    "noImpact": [
-      -5,
-      8,
-      10
-    ]
+    hard: "No reliever on the board offers more impact, but the acquisition price is closer to the cost of a controllable starter than a typical bullpen rental.",
+    question: "Do you make a blockbuster move for an elite closer?",
+    accept: "Acquire Miller",
+    decline: "Reject the price",
+    rosWar: 1.1,
+    acceptedSummary: "Went all in for Mason Miller",
+    declinedSummary: "Refused San Diego’s blockbuster demand"
   },
   {
-    "city": "Los Angeles",
-    "team": "Los Angeles Dodgers",
-    "player": "Andrew Kittredge",
-    "type": "Sell",
-    "time": "July 31 · 1:28 p.m.",
-    "about": "Andrew Kittredge is a veteran Orioles reliever who can handle setup and occasional save situations. He is eligible for free agency after the season.",
-    "offer": [
-      "A Double-A starter with a chance to become a No. 5 starter",
-      "A teenage outfielder with tools and significant development risk"
+    city: "Seattle",
+    player: "Taylor Ward",
+    type: "Sell",
+    time: "July 30 · 1:19 p.m.",
+    about: "Seattle wants Ward’s on-base ability and middle-of-the-order experience. FanGraphs’ full-season and year-to-date figures imply about 1.0 WAR of remaining value.",
+    offer: [
+      "Mariners receive OF/DH Taylor Ward",
+      "Orioles receive a Double-A starting pitcher and a high-upside infield prospect"
     ],
-    "hard": "Kittredge helps Baltimore’s bullpen today. The offered players are unlikely to help immediately, but they could prevent another veteran from leaving without a return.",
-    "question": "Do you sell a trusted Orioles reliever while the team is still contending?",
-    "yes": "Trade Kittredge",
-    "no": "Keep Kittredge",
-    "yesImpact": [
-      -4,
-      4,
-      6
-    ],
-    "noImpact": [
-      3,
-      -2,
-      -3
-    ]
+    hard: "Trading Ward would replenish the system but remove one of Baltimore’s better projected hitters from a club still chasing October.",
+    question: "Do you sell a productive hitter during the playoff race?",
+    accept: "Trade Ward",
+    decline: "Keep Ward",
+    rosWar: -1.0,
+    acceptedSummary: "Traded Taylor Ward for two prospects",
+    declinedSummary: "Kept Taylor Ward for the playoff push"
   },
   {
-    "city": "Anaheim",
-    "team": "Los Angeles Angels",
-    "player": "Reid Detmers",
-    "type": "Buy",
-    "time": "Aug. 1 · 10:17 a.m.",
-    "about": "Reid Detmers is a 27-year-old Angels left-handed starter with swing-and-miss ability and an uneven major league track record. Baltimore would control him through 2028.",
-    "offer": [
-      "Baltimore’s No. 3 prospect",
-      "A second prospect ranked in the organization’s top 15"
+    city: "Boston",
+    player: "Aroldis Chapman",
+    type: "Buy",
+    time: "July 31 · 10:37 a.m.",
+    about: "Chapman remains a high-leverage left-hander with swing-and-miss stuff. FanGraphs Depth Charts projects 0.6 WAR over the rest of the season.",
+    offer: [
+      "Orioles receive LHP Aroldis Chapman",
+      "Red Sox receive a near-major-league position prospect"
     ],
-    "hard": "Detmers offers three playoff races of rotation upside, but he is not a guaranteed ace. The Orioles would be paying for years of control as much as current performance.",
-    "question": "Do you trade two strong prospects for a controllable starter?",
-    "yes": "Acquire Detmers",
-    "no": "Keep the prospects",
-    "yesImpact": [
-      6,
-      9,
-      6
-    ],
-    "noImpact": [
-      -3,
-      -4,
-      7
-    ]
+    hard: "The on-field upgrade is real, but making a deadline deal inside the division raises the price and the scrutiny.",
+    question: "Do you strengthen the bullpen through an AL East rival?",
+    accept: "Acquire Chapman",
+    decline: "End talks",
+    rosWar: 0.6,
+    acceptedSummary: "Acquired Aroldis Chapman",
+    declinedSummary: "Passed on Aroldis Chapman"
   },
   {
-    "city": "Texas",
-    "team": "Texas Rangers",
-    "player": "Adley Rutschman",
-    "type": "Blockbuster",
-    "time": "Aug. 2 · 5:41 p.m.",
-    "about": "Adley Rutschman is the Orioles’ starting catcher, a former No. 1 overall pick and one of the faces of the franchise. Baltimore controls him through 2027. Samuel Basallo gives the organization another possible long-term answer behind the plate.",
-    "offer": [
-      "A consensus top-40 overall prospect who is nearly major league ready",
-      "A young MLB starting pitcher with five years of team control",
-      "A lower-level catching prospect with everyday upside"
+    city: "Cincinnati",
+    player: "Eugenio Suárez",
+    type: "Buy",
+    time: "July 31 · 5:54 p.m.",
+    about: "Suárez offers right-handed power but has struggled overall in 2026. FanGraphs Depth Charts projects 0.3 WAR over the rest of the season.",
+    offer: [
+      "Orioles receive 3B Eugenio Suárez",
+      "Reds receive a Double-A pitcher and salary relief"
     ],
-    "hard": "Trading Rutschman could replenish the roster before he approaches free agency. It could also become one of the most regrettable moves in franchise history if he returns to star form.",
-    "question": "Do you trade a franchise cornerstone before his value or team control declines?",
-    "yes": "Trade Rutschman",
-    "no": "Keep Rutschman",
-    "yesImpact": [
-      -8,
-      -3,
-      15
-    ],
-    "noImpact": [
-      5,
-      7,
-      -8
-    ]
+    hard: "The acquisition cost is manageable, but the projected upgrade is modest and his contact and defensive limitations create downside.",
+    question: "Do you make one final move for a power bat?",
+    accept: "Acquire Suárez",
+    decline: "Stand pat",
+    rosWar: 0.3,
+    acceptedSummary: "Added Eugenio Suárez",
+    declinedSummary: "Passed on Eugenio Suárez"
   }
 ];
 
-const app = document.getElementById("app");
-const score2026 = document.getElementById("score-2026");
-const score2027 = document.getElementById("score-2027");
-const score2028 = document.getElementById("score-2028");
-const bar2026 = document.getElementById("bar-2026");
-const bar2027 = document.getElementById("bar-2027");
-const bar2028 = document.getElementById("bar-2028");
-
 const state = {
   index: 0,
-  outlook: { ...baseline },
+  record: { ...FALLBACK },
   answers: [],
-  pending: null,
-  callAnswered: false
+  started: false
 };
 
-const clamp = value => Math.max(5, Math.min(95, value));
-const signed = value => value > 0 ? `+${value}` : `${value}`;
+const app = document.getElementById("app");
+const recordEl = document.getElementById("record");
+const remainingEl = document.getElementById("remaining");
+const approachEl = document.getElementById("approach");
+const dataStatusEl = document.getElementById("data-status");
 
-function updateScoreboard() {
-  const y26 = clamp(state.outlook.y2026);
-  const y27 = clamp(state.outlook.y2027);
-  const y28 = clamp(state.outlook.y2028);
-
-  score2026.textContent = `${y26}%`;
-  score2027.textContent = `${y27}%`;
-  score2028.textContent = `${y28}%`;
-
-  bar2026.style.width = `${y26}%`;
-  bar2027.style.width = `${y27}%`;
-  bar2028.style.width = `${y28}%`;
+function gamesRemaining() {
+  return Math.max(0, 162 - state.record.wins - state.record.losses);
 }
 
-function topProgress() {
-  const complete = Math.round((state.index / trades.length) * 100);
+function updateHeader() {
+  recordEl.textContent = `${state.record.wins}-${state.record.losses}`;
+  remainingEl.textContent = gamesRemaining();
+
+  const accepted = state.answers.filter(a => a.accepted);
+  const war = accepted.reduce((sum, a) => sum + a.call.rosWar, 0);
+
+  let approach = "Undecided";
+  if (state.answers.length) {
+    if (war >= 3.0) approach = "All-in buyer";
+    else if (war >= 1.0) approach = "Aggressive buyer";
+    else if (war > 0.15) approach = "Measured buyer";
+    else if (war < -0.2) approach = "Deadline seller";
+    else approach = "Mostly stood pat";
+  }
+  approachEl.textContent = approach;
+}
+
+async function loadLiveRecord() {
+  const url = `https://statsapi.mlb.com/api/v1/standings?leagueId=103&season=${SEASON}&standingsTypes=regularSeason`;
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) throw new Error("MLB data request failed");
+    const data = await response.json();
+
+    let found = null;
+    for (const recordGroup of data.records || []) {
+      for (const teamRecord of recordGroup.teamRecords || []) {
+        if (teamRecord.team && teamRecord.team.id === ORIOLES_TEAM_ID) {
+          found = {
+            wins: Number(teamRecord.wins),
+            losses: Number(teamRecord.losses)
+          };
+        }
+      }
+    }
+
+    if (!found || !Number.isFinite(found.wins) || !Number.isFinite(found.losses)) {
+      throw new Error("Orioles record not found");
+    }
+
+    state.record = found;
+    const stamp = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    }).format(new Date());
+
+    dataStatusEl.textContent = `Record updated from MLB data: ${stamp}.`;
+  } catch (error) {
+    state.record = { ...FALLBACK };
+    dataStatusEl.textContent = "Live record unavailable. Using the saved 50-53 record.";
+  }
+  updateHeader();
+  if (!state.started) renderStart();
+}
+
+function progressMarkup() {
+  const pct = Math.round((state.index / calls.length) * 100);
   return `
     <div class="progress-row">
-      <span>Decision ${state.index + 1} of ${trades.length}</span>
-      <span>${complete}% complete</span>
+      <span>Call ${Math.min(state.index + 1, calls.length)} of ${calls.length}</span>
+      <span>${pct}% complete</span>
     </div>
-    <div class="progress"><span style="width:${complete}%"></span></div>
+    <div class="progress"><span style="width:${pct}%"></span></div>
   `;
 }
 
-function renderIncomingCall() {
-  updateScoreboard();
-  const trade = trades[state.index];
-  state.callAnswered = false;
-
+function renderStart() {
+  const remaining = gamesRemaining();
   app.innerHTML = `
-    ${topProgress()}
-    <section class="call-screen">
-      <div class="call-ring" aria-hidden="true">☎</div>
-      <div class="call-label">Incoming trade call</div>
-      <h2 class="call-city">${trade.city}</h2>
-      <p class="call-sub">${trade.city} is calling.</p>
-      <button class="answer-call" type="button">Answer call</button>
+    <section class="start-screen">
+      <div class="call-label">Your assignment</div>
+      <h2>Build a playoff team</h2>
+      <p>The Orioles are <strong>${state.record.wins}-${state.record.losses}</strong> with <strong>${remaining} games remaining</strong>. The postseason is within reach, but the club needs help. Take six calls and decide how much of the future you are willing to spend on 2026.</p>
+      <button class="primary" id="start-btn" type="button">Enter the deadline room</button>
     </section>
   `;
+  document.getElementById("start-btn").addEventListener("click", () => {
+    state.started = true;
+    renderIncoming();
+  });
+}
 
-  app.querySelector(".answer-call").addEventListener("click", renderDecision);
+function renderIncoming() {
+  updateHeader();
+  const call = calls[state.index];
+  app.innerHTML = `
+    ${progressMarkup()}
+    <section class="call-screen">
+      <div class="call-icon" aria-hidden="true">☎</div>
+      <div class="call-label">Incoming trade call</div>
+      <h2>${call.city}</h2>
+      <p>${call.city} is calling.</p>
+      <button class="primary" id="answer-btn" type="button">Answer call</button>
+    </section>
+  `;
+  document.getElementById("answer-btn").addEventListener("click", renderDecision);
 }
 
 function renderDecision() {
-  const trade = trades[state.index];
-  state.callAnswered = true;
-  const offerMarkup = trade.offer.map(item => `<li>${item}</li>`).join("");
-
+  const call = calls[state.index];
   app.innerHTML = `
-    ${topProgress()}
+    ${progressMarkup()}
     <article>
       <div class="call-strip">
-        <span class="trade-tag ${trade.type.toLowerCase()}">${trade.type}</span>
-        <span class="timestamp">${trade.time}</span>
+        <span class="trade-tag ${call.type.toLowerCase()}">${call.type}</span>
+        <span class="timestamp">${call.time}</span>
         <span class="call-status">☎ Call connected</span>
       </div>
 
-      <h2 class="player-name">${trade.player}</h2>
-      <p class="team-line">${trade.city} is calling.</p>
+      <h2 class="player-name">${call.player}</h2>
+      <p class="team-line">${call.city} is calling.</p>
 
-      <section class="info-block">
-        <h3>What you need to know</h3>
-        <p>${trade.about}</p>
-      </section>
-
-      <section class="info-block">
-        <h3>The offer</h3>
-        <ul class="offer-list">${offerMarkup}</ul>
-      </section>
+      <div class="info-grid">
+        <section class="info-block">
+          <h3>What you need to know</h3>
+          <p>${call.about}</p>
+        </section>
+        <section class="info-block">
+          <h3>The offer</h3>
+          <ul class="offer-list">${call.offer.map(item => `<li>${item}</li>`).join("")}</ul>
+        </section>
+      </div>
 
       <aside class="hard-call">
         <strong>Why this is hard</strong>
-        <span>${trade.hard}</span>
+        ${call.hard}
       </aside>
 
-      <p class="question">${trade.question}</p>
+      <p class="question">${call.question}</p>
 
       <div class="choice-grid">
-        <button class="choice primary" type="button" data-choice="yes">${trade.yes}</button>
-        <button class="choice" type="button" data-choice="no">${trade.no}</button>
+        <button class="choice accept" data-accepted="true" type="button">
+          ${call.accept}
+          <span class="choice-note">Approve the proposed transaction</span>
+        </button>
+        <button class="choice" data-accepted="false" type="button">
+          ${call.decline}
+          <span class="choice-note">Leave the current roster unchanged</span>
+        </button>
       </div>
-
-      <div class="reaction" id="reaction"></div>
     </article>
   `;
 
-  app.querySelectorAll("[data-choice]").forEach(button => {
-    button.addEventListener("click", () => previewChoice(button.dataset.choice));
+  app.querySelectorAll(".choice").forEach(button => {
+    button.addEventListener("click", () => choose(button.dataset.accepted === "true"));
   });
 }
 
-function previewChoice(choice) {
-  if (state.pending) return;
-
-  const trade = trades[state.index];
-  const impactArray = choice === "yes" ? trade.yesImpact : trade.noImpact;
-  const impact = { y2026: impactArray[0], y2027: impactArray[1], y2028: impactArray[2] };
-  state.pending = { choice, impact };
-
-  app.querySelectorAll("[data-choice]").forEach(button => button.disabled = true);
-
-  const reaction = document.getElementById("reaction");
-  reaction.classList.add("visible");
-  reaction.innerHTML = `
-    <strong>Your decision: ${choice === "yes" ? trade.yes : trade.no}</strong>
-    <div>${choice === "yes"
-      ? "You accepted the offer and reshaped Baltimore’s roster."
-      : "You declined the offer and kept the current plan intact."}</div>
-    <div class="impact-line">
-      Outlook change:
-      2026 ${signed(impact.y2026)} ·
-      2027 ${signed(impact.y2027)} ·
-      2028 ${signed(impact.y2028)}
-    </div>
-    <button class="next" type="button">
-      ${state.index === trades.length - 1 ? "See your final report" : "Take the next call"}
-    </button>
-  `;
-
-  reaction.querySelector(".next").addEventListener("click", commitChoice);
-}
-
-function commitChoice() {
-  const trade = trades[state.index];
-  const { choice, impact } = state.pending;
-
-  Object.keys(state.outlook).forEach(year => {
-    state.outlook[year] += impact[year];
-  });
-
-  state.answers.push({
-    player: trade.player,
-    decision: choice === "yes" ? trade.yes : trade.no,
-    impact
-  });
-
+function choose(accepted) {
+  state.answers.push({ call: calls[state.index], accepted });
   state.index += 1;
-  state.pending = null;
+  updateHeader();
 
-  if (state.index < trades.length) {
-    renderIncomingCall();
-  } else {
-    renderResults();
-  }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (state.index < calls.length) renderIncoming();
+  else renderRecap();
 }
 
-function grade(value) {
-  if (value >= 82) return "A";
-  if (value >= 72) return "B";
-  if (value >= 60) return "C";
-  if (value >= 48) return "D";
-  return "F";
-}
-
-function getProfile() {
-  const now = state.outlook.y2026;
-  const future = (state.outlook.y2027 + state.outlook.y2028) / 2;
-
-  if (now >= 67 && future < 57) {
-    return {
-      name: "All-In Contender",
-      copy: "You pushed hard for 2026 and accepted a thinner future. The roster is more dangerous now, but your margin for error later is smaller."
-    };
-  }
-
-  if (now <= 44 && future >= 70) {
-    return {
-      name: "Long-Term Builder",
-      copy: "You protected and expanded the future at the expense of the current run. Your deadline requires patience, but it could age well."
-    };
-  }
-
-  return {
-    name: "Balanced Operator",
-    copy: "You tried to improve the present without stripping the organization. You did not maximize one window, but you preserved multiple paths forward."
-  };
-}
-
-function renderYear(year, key, note) {
-  const items = state.answers.map(answer => {
-    const delta = answer.impact[key];
-    const cls = delta >= 0 ? "positive" : "negative";
-    return `
-      <li>
-        <span class="impact-player">${answer.player}</span>
-        <span>${answer.decision}</span>
-        <span class="delta ${cls}">${signed(delta)}</span>
-      </li>
-    `;
-  }).join("");
-
-  return `
-    <h3 class="section-title">${year} outlook</h3>
-    <p class="year-note">${note}</p>
-    <ul class="impact-list">${items}</ul>
-  `;
-}
-
-function renderResults() {
-  updateScoreboard();
-  const profile = getProfile();
-
-  const aggressiveness = clamp(50 + state.answers.reduce((sum, a) => sum + Math.abs(a.impact.y2026), 0));
-  const presentGrade = grade(clamp(state.outlook.y2026));
-  const rosterGrade = grade(clamp(state.outlook.y2027));
-  const futureGrade = grade(clamp(state.outlook.y2028));
-  const riskGrade = grade(100 - Math.min(95, aggressiveness));
-
-  const decisions = state.answers.map(answer => `
-    <li><span>${answer.player}</span><strong>${answer.decision}</strong></li>
+function renderRecap() {
+  const items = state.answers.map(({ call, accepted }) => `
+    <li><b>${accepted ? "DEAL" : "NO DEAL"}</b> — ${accepted ? call.acceptedSummary : call.declinedSummary}</li>
   `).join("");
 
   app.innerHTML = `
-    <header class="results-header">
-      <div class="results-kicker">Deadline complete</div>
-      <h2 class="results-title">Your GM report</h2>
-      <div class="personality">${profile.name}</div>
-      <p>${profile.copy}</p>
-    </header>
-
-    <section class="report-grid" aria-label="Final grades">
-      <article class="report-card">
-        <span class="report-label">2026</span>
-        <strong class="report-grade">${presentGrade}</strong>
-      </article>
-      <article class="report-card">
-        <span class="report-label">2027</span>
-        <strong class="report-grade">${rosterGrade}</strong>
-      </article>
-      <article class="report-card">
-        <span class="report-label">2028</span>
-        <strong class="report-grade">${futureGrade}</strong>
-      </article>
-      <article class="report-card">
-        <span class="report-label">Risk control</span>
-        <strong class="report-grade">${riskGrade}</strong>
-      </article>
+    <section>
+      <div class="call-label">The deadline has passed</div>
+      <h2 class="player-name">Your deadline moves</h2>
+      <p class="team-line">The phones are quiet. Now the season has to play out.</p>
+      <div class="recap">
+        <h3>Transaction log</h3>
+        <ul>${items}</ul>
+      </div>
+      <div class="actions">
+        <button class="primary" id="simulate-btn" type="button">Simulate the rest of the season</button>
+      </div>
     </section>
+  `;
+  document.getElementById("simulate-btn").addEventListener("click", startSimulation);
+}
 
-    <h3 class="section-title">Your six decisions</h3>
-    <ul class="decision-list">${decisions}</ul>
+function randomNormal() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
 
-    ${renderYear("2026", "y2026", "Immediate roster strength and playoff value.")}
-    ${renderYear("2027", "y2027", "Next season’s roster and near-term control.")}
-    ${renderYear("2028", "y2028", "Long-term depth, control and flexibility.")}
+function binomial(n, p) {
+  let wins = 0;
+  for (let i = 0; i < n; i++) {
+    if (Math.random() < p) wins++;
+  }
+  return wins;
+}
 
-    <button class="restart" type="button">Play again</button>
+function calculateModel() {
+  const accepted = state.answers.filter(a => a.accepted);
+  const netWar = accepted.reduce((sum, a) => sum + a.call.rosWar, 0);
+  const remaining = gamesRemaining();
+  const gamesPlayed = state.record.wins + state.record.losses;
+
+  // FanGraphs Depth Charts projected Baltimore for a .504 rest-of-season
+  // winning percentage on July 23, 2026. One projected WAR is treated as
+  // approximately one additional win over the remaining schedule.
+  const baselinePct = .504;
+  const adjustedPct = Math.max(.30, Math.min(.70, baselinePct + (netWar / Math.max(1, remaining))));
+
+  const totals = [];
+  let playoffCount = 0;
+
+  for (let i = 0; i < SIMULATIONS; i++) {
+    const seasonVariance = randomNormal() * .012;
+    const p = Math.max(.28, Math.min(.72, adjustedPct + seasonVariance));
+    const restWins = binomial(remaining, p);
+    const finalWins = state.record.wins + restWins;
+
+    // The cut-line distribution is calibrated so the no-trade model is close
+    // to FanGraphs' 24.8% Orioles playoff probability on July 23, 2026.
+    const cutoff = Math.round(83.1 + randomNormal() * 1.8);
+    const madePlayoffs = finalWins >= cutoff;
+
+    totals.push(finalWins);
+    if (madePlayoffs) playoffCount++;
+  }
+
+  totals.sort((a, b) => a - b);
+  const averageWins = totals.reduce((a, b) => a + b, 0) / totals.length;
+  const medianWins = totals[Math.floor(totals.length / 2)];
+  const playoffPct = Math.round((playoffCount / SIMULATIONS) * 100);
+
+  // Pick a single representative playthrough close to the median, with modest randomness.
+  const targetIndex = Math.max(0, Math.min(totals.length - 1,
+    Math.floor(totals.length * (.42 + Math.random() * .16))
+  ));
+  const yourWins = totals[targetIndex];
+  const yourLosses = 162 - yourWins;
+
+  return { netWar, averageWins, medianWins, playoffPct, yourWins, yourLosses };
+}
+
+function startSimulation() {
+  app.innerHTML = `
+    <section class="sim-screen">
+      <div class="call-label">Running the model</div>
+      <h2>Simulating 10,000 seasons</h2>
+      <div class="sim-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p>Applying your deadline moves to the Orioles’ rest-of-season outlook…</p>
+    </section>
+  `;
+  setTimeout(() => renderResults(calculateModel()), 1050);
+}
+
+
+function philosophy(model) {
+  if (model.netWar >= 3.0) return "October or Bust";
+  if (model.netWar >= 1.2) return "Aggressive Buyer";
+  if (model.netWar >= .35) return "Measured Buyer";
+  if (model.netWar < -.2) return "Deadline Seller";
+  return "Cautious Operator";
+}
+
+function outcomeFor(wins, playoffPct) {
+  if (wins >= 92) return "Won the AL East and reached October";
+  if (wins >= 87) return "Claimed an American League wild-card berth";
+  if (wins >= 85 && playoffPct >= 45) return "Survived the bubble and reached the postseason";
+  if (wins >= 83) return "Stayed alive until the final week but missed October";
+  return "Fell short of the postseason";
+}
+
+function biggestMove() {
+  const accepted = state.answers.filter(a => a.accepted);
+  if (!accepted.length) return {
+    title: "Standing pat",
+    text: "You declined every proposal and asked the current roster to save the season without outside help."
+  };
+  const best = [...accepted].sort((a, b) => b.call.rosWar - a.call.rosWar)[0];
+  return {
+    title: best.call.player,
+    text: `${best.call.acceptedSummary}. In the prototype model, this was your largest rest-of-season upgrade.`
+  };
+}
+
+function biggestRisk() {
+  const wardDeal = state.answers.find(a => a.call.player === "Taylor Ward" && a.accepted);
+  if (wardDeal) {
+    return {
+      title: "Selling while contending",
+      text: "Trading Taylor Ward removed the largest amount of projected 2026 value from your roster."
+    };
+  }
+  const declined = state.answers.filter(a => !a.accepted).sort((a, b) => b.call.rosWar - a.call.rosWar)[0];
+  if (declined && declined.call.rosWar > 0) {
+    return {
+      title: `Passing on ${declined.call.player}`,
+      text: `You declined the largest projected upgrade left on the board: ${declined.call.rosWar.toFixed(1)} rest-of-season WAR.`
+    };
+  }
+  return {
+    title: "Paying the deadline premium",
+    text: "You accepted every major upgrade and assumed the long-term cost embedded in the hypothetical trade packages."
+  };
+}
+
+function renderResults(model) {
+  const made = model.yourWins >= 86;
+  const move = biggestMove();
+  const risk = biggestRisk();
+
+  app.innerHTML = `
+    <section class="results">
+      <div class="result-hero">
+        <div class="kicker">Your simulated season</div>
+        <div class="result-record">${model.yourWins}-${model.yourLosses}</div>
+        <p class="result-outcome">${made ? "✓" : "—"} ${outcomeFor(model.yourWins, model.playoffPct)}</p>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-box">
+          <span class="result-label">Playoff probability</span>
+          <strong>${model.playoffPct}%</strong>
+        </div>
+        <div class="result-box">
+          <span class="result-label">Average finish</span>
+          <strong>${model.averageWins.toFixed(1)} wins</strong>
+        </div>
+        <div class="result-box">
+          <span class="result-label">Net projected value</span>
+          <strong>${model.netWar >= 0 ? "+" : ""}${model.netWar.toFixed(1)} WAR</strong>
+        </div>
+      </div>
+
+      <h2>${philosophy(model)}</h2>
+      <p class="result-copy">Your accepted moves changed the prototype’s rest-of-season projection by <strong>${model.netWar >= 0 ? "+" : ""}${model.netWar.toFixed(2)} wins</strong>. The model then simulated the remaining ${gamesRemaining()} games 10,000 times.</p>
+
+      <div class="analysis-grid">
+        <section class="analysis-card">
+          <h3>Biggest move</h3>
+          <p><strong>${move.title}</strong><br>${move.text}</p>
+        </section>
+        <section class="analysis-card">
+          <h3>Biggest risk</h3>
+          <p><strong>${risk.title}</strong><br>${risk.text}</p>
+        </section>
+      </div>
+
+      <p class="method-note"><strong>Methodology:</strong> The live record comes from MLB’s standings feed when available. Player values use FanGraphs Depth Charts rest-of-season WAR as accessed July 23, 2026. Baltimore’s no-trade baseline uses FanGraphs’ .504 rest-of-season winning percentage and 24.8% playoff probability from the same date. The simulator converts each net WAR change into an equivalent change in expected wins and runs 10,000 remaining-season trials. Trade proposals and prospect packages are hypothetical and are not reported offers.</p>
+
+      <div class="actions">
+        <button class="primary" id="replay-btn" type="button">Try another deadline</button>
+      </div>
+    </section>
   `;
 
-  app.querySelector(".restart").addEventListener("click", restartGame);
+  document.getElementById("replay-btn").addEventListener("click", resetGame);
 }
 
-function restartGame() {
+function resetGame() {
   state.index = 0;
-  state.outlook = { ...baseline };
   state.answers = [];
-  state.pending = null;
-  renderIncomingCall();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  state.started = true;
+  updateHeader();
+  renderIncoming();
 }
 
-renderIncomingCall();
+updateHeader();
+renderStart();
+loadLiveRecord();
