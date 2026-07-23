@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="Take six calls and run the Orioles at the trade deadline.">
+  <title>You're the Orioles GM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <noscript>
+    <div class="noscript">This game requires JavaScript to run.</div>
+  </noscript>
+
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="eyebrow">Baltimore baseball interactive</div>
+      <h1>You’re the Orioles GM</h1>
+      <p class="dek">
+        Six teams are calling before the trade deadline. Improve the current club,
+        protect the future — or attempt to do both.
+      </p>
+    </header>
+
+    <section class="scoreboard" aria-label="Current outlook">
+      <article class="score-card">
+        <span class="score-label">2026 playoff outlook</span>
+        <strong class="score-number" id="score-2026">48%</strong>
+        <div class="score-track" aria-hidden="true"><span id="bar-2026"></span></div>
+      </article>
+
+      <article class="score-card">
+        <span class="score-label">2027 roster outlook</span>
+        <strong class="score-number" id="score-2027">61%</strong>
+        <div class="score-track" aria-hidden="true"><span id="bar-2027"></span></div>
+      </article>
+
+      <article class="score-card">
+        <span class="score-label">2028 future outlook</span>
+        <strong class="score-number" id="score-2028">66%</strong>
+        <div class="score-track" aria-hidden="true"><span id="bar-2028"></span></div>
+      </article>
+    </section>
+
+    <main id="app" class="game-panel" aria-live="polite"></main>
+
+    <footer class="site-footer">
+      Hypothetical trade packages and editorial outlook scores are for discussion and entertainment.
+      They are not reported offers or projections.
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
