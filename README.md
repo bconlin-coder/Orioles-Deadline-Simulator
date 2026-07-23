@@ -1,33 +1,74 @@
-# Can You Get the Orioles to October?
+# Can You Get the Orioles to October? — Adaptive build
 
-A standalone GitHub Pages game.
+Upload these files to the root of the GitHub Pages repository:
 
-## Data used in this version
+- `index.html`
+- `style.css`
+- `script.js`
 
-The game uses:
+## What changed
 
-- The Orioles' live record from MLB's standings feed, with 50-53 as the fallback.
-- FanGraphs Depth Charts' July 23, 2026 Orioles rest-of-season winning percentage: .504.
-- FanGraphs' July 23, 2026 Orioles playoff probability: 24.8%.
-- FanGraphs Depth Charts rest-of-season WAR:
-  - Joe Ryan: 1.3
-  - Reid Detmers: approximately 1.1
-  - Mason Miller: 1.1
-  - Aroldis Chapman: 0.6
-  - Eugenio Suárez: 0.3
-  - Taylor Ward: 1.0, derived from projected full-season WAR minus year-to-date WAR
+This build is no longer a fixed six-question sequence.
 
-The trade proposals and prospect packages are hypothetical. They are not presented as reported offers.
+The trade engine tracks four roster needs identified in the supplied Baltimore Sun analysis:
 
-## Simulation
+1. Back-end reliever
+2. Left-handed reliever
+3. Frontline starter
+4. Capable hitter
 
-1. Start with Baltimore's live record.
-2. Use FanGraphs' .504 rest-of-season winning percentage as the no-trade baseline.
-3. Add or subtract each accepted player's projected rest-of-season WAR.
-4. Convert net WAR to expected wins over the remaining schedule.
-5. Run 10,000 simulations.
-6. Use a variable playoff cut line calibrated so the no-trade model is close to FanGraphs' 24.8% playoff probability.
+Accepted trades close needs and remove redundant future calls. For example:
 
-## Installation
+- Acquiring Joe Ryan closes the frontline-starter need, so Reid Detmers will not appear.
+- Passing on Joe Ryan can unlock Detmers as a later alternative.
+- Acquiring Adrián Morejón closes both bullpen needs.
+- Acquiring Luke Weaver closes only the back-end-reliever need, leaving a lefty call available.
+- A Taylor Ward sell offer appears only if the user has mostly declined upgrades or added little modeled value.
 
-Upload `index.html`, `style.css` and `script.js` to the root of the existing GitHub Pages repository, replacing the previous files.
+Each playthrough contains up to six calls, but the calls depend on earlier decisions.
+
+## Simulation design
+
+The simulation separates two concepts:
+
+### 1. Expected roster strength
+
+Baltimore starts with a .504 rest-of-season winning percentage. Each accepted transaction changes the projection by its **marginal model impact**, meaning the estimated improvement over the player or role being replaced.
+
+Current tuning assumptions:
+
+- Joe Ryan: +1.05 wins
+- Reid Detmers: +0.75
+- Adrián Morejón: +0.65
+- Luke Weaver: +0.35
+- Brock Burke: +0.25
+- Luis Arraez: +0.70
+- Mickey Moniak: +0.40
+- Taylor Ward trade: -0.85
+- Michael Wacha: +0.35
+
+These are editable constants in `script.js`. They are not presented as reported trade values or as each player’s complete WAR projection.
+
+### 2. Baseball randomness
+
+Each of the 10,000 trials includes:
+
+- normal game-to-game variance;
+- a team-level hot/cold performance shock with a standard deviation of 2.8 wins;
+- a variable American League playoff cut line.
+
+The result screen emphasizes one randomly selected season. The average projection is shown secondarily so a lucky or unlucky result has context.
+
+Examples:
+
+- **You caught fire:** the random season finishes at least four wins above the average projection.
+- **Bad break:** it finishes at least four wins below average.
+- **A typical outcome:** it finishes near the average.
+
+## Live record
+
+The app requests the Orioles’ record from MLB’s public standings endpoint whenever the page loads. If that request fails, it uses the saved 50-53 fallback.
+
+## Editorial note
+
+All proposals and prospect packages are hypothetical and must not be described as reported offers. Before publication, editors can revise any deal language or `modelImpact` value directly in the `deals` array in `script.js`.

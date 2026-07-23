@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171717">
   <title>Can You Get the Orioles to October?</title>
-  <meta name="description" content="Take six trade calls and see whether your deadline decisions can get the Orioles to October.">
-  <link rel="stylesheet" href="style.css?v=20260723-october">
+  <meta name="description" content="Run the Orioles' trade deadline, fill the roster's biggest needs and simulate the race to October.">
+  <link rel="stylesheet" href="style.css?v=20260723-adaptive">
 </head>
 <body>
   <noscript><div class="noscript">This interactive requires JavaScript.</div></noscript>
@@ -15,7 +15,7 @@
     <header class="hero">
       <div class="eyebrow">Baltimore baseball interactive</div>
       <h1>Can You Get the Orioles to October?</h1>
-      <p class="dek">Take six trade calls, balance the present against the future and see whether your deadline decisions are enough to reach the postseason.</p>
+      <p class="dek">Run the trade deadline, address Baltimore’s biggest roster needs and see whether the team you build can reach the postseason.</p>
     </header>
 
     <section class="status-grid" aria-label="Orioles season status">
@@ -35,13 +35,24 @@
 
     <p class="data-status" id="data-status">Loading the latest record from MLB data…</p>
 
+    <section class="needs-panel" aria-label="Orioles roster needs">
+      <div class="needs-heading">
+        <div>
+          <span class="mini-label">Roster board</span>
+          <h2>Four needs to consider</h2>
+        </div>
+        <span id="needs-count">0 of 4 addressed</span>
+      </div>
+      <div class="needs-grid" id="needs-grid"></div>
+    </section>
+
     <main id="app" class="game-card" aria-live="polite"></main>
 
     <footer>
-      Hypothetical trades are not reported offers. Player values use FanGraphs Depth Charts rest-of-season projections accessed July 23, 2026.
+      All trade proposals and prospect packages are hypothetical and are not reported offers. The simulator uses transparent model-impact assumptions documented in the README.
     </footer>
   </div>
 
-  <script src="script.js?v=20260723-october"></script>
+  <script src="script.js?v=20260723-adaptive"></script>
 </body>
 </html>
