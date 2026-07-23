@@ -1,4 +1,4 @@
-# Orioles Deadline Simulator — Ultra-Polished Version
+# Orioles Deadline Simulator — Final Replacement Build
 
 ## Publish
 
@@ -26,3 +26,10 @@ Your existing URL should remain:
 - Live 2026, 2027 and 2028 outlook meters
 - Final GM personality and report-card grades
 - Cleaner decision summaries and year-by-year impact
+
+## Final verification
+
+- “Seattle is calling.” appears on both Seattle call screens.
+- JavaScript syntax validated.
+- CSS and JavaScript URLs include a version string to reduce stale browser caching.
+- The package preserves the existing GitHub Pages URL when it replaces the root files.
