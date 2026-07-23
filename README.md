@@ -1,57 +1,28 @@
-# You're the Orioles GM
+# Orioles Deadline Simulator — Ultra-Polished Version
 
-A self-contained, mobile-responsive Orioles trade deadline decision game.
+## Publish
 
-## Files
+Upload these files to the root of your existing GitHub repository:
 
 - `index.html`
 - `style.css`
 - `script.js`
 
-## Publish with GitHub Pages
+Choose **Add file → Upload files** in GitHub and replace the old files when prompted.
 
-1. Download and unzip the project.
-2. Create a new **public** GitHub repository.
-3. Upload all three files to the repository root.
-4. Commit the files.
-5. Open **Settings → Pages**.
-6. Under **Build and deployment**, select **Deploy from a branch**.
-7. Choose the `main` branch and `/ (root)`.
-8. Save.
+GitHub Pages will redeploy automatically after you commit the changes.
 
-Your site will appear at:
+Your existing URL should remain:
 
-`https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/`
+`https://bconlin-coder.github.io/Orioles-Deadline-Simulator/`
 
-## WordPress embed
+## What changed
 
-Replace the URL below with the GitHub Pages URL:
-
-```html
-<iframe
-  src="https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/"
-  title="Orioles trade deadline GM game"
-  width="100%"
-  height="2200"
-  loading="lazy"
-  style="border:0; width:100%;"
-></iframe>
-```
-
-The results page is long, so an iframe height around 2000–2400 pixels is recommended.
-
-## Editing the game
-
-All trade copy, offers, consequences and scoring are in `script.js`.
-
-Search for:
-
-```js
-const trades = [
-```
-
-The layout is in `index.html`, and all styling is in `style.css`.
-
-## Editorial note
-
-The game uses hypothetical trade packages and editorial outlook scores. It does not use official team logos, player photos or external assets.
+- Incoming-call screen before each decision
+- Natural language such as “Seattle is calling”
+- Refined newsroom design
+- Animated live indicator and phone
+- Improved mobile layout
+- Live 2026, 2027 and 2028 outlook meters
+- Final GM personality and report-card grades
+- Cleaner decision summaries and year-by-year impact

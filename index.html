@@ -4,49 +4,47 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111">
+  <title>You’re the Orioles GM</title>
   <meta name="description" content="Take six calls and run the Orioles at the trade deadline.">
-  <title>You're the Orioles' GM</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <noscript>
-    <div class="noscript">This game requires JavaScript to run.</div>
-  </noscript>
+  <noscript><div class="noscript">This game requires JavaScript.</div></noscript>
 
   <div class="page-shell">
-    <header class="site-header">
-      <div class="eyebrow">Baltimore baseball interactive</div>
-      <h1>You’re the Orioles' GM</h1>
-      <p class="dek">
-        Six teams are calling before the trade deadline. Improve the current club,
-        protect the future — or attempt to do both.
+    <header class="hero">
+      <div class="brand-line">
+        <span class="brand-kicker">Baltimore baseball interactive</span>
+        <span class="live-chip"><span class="live-dot"></span> Deadline room live</span>
+      </div>
+      <h1>You’re the Orioles GM</h1>
+      <p class="hero-dek">
+        Six calls. One deadline. Build the strongest Orioles team you can without wrecking the future.
       </p>
     </header>
 
     <section class="scoreboard" aria-label="Current outlook">
-      <article class="score-card">
-        <span class="score-label">2026 playoff outlook</span>
-        <strong class="score-number" id="score-2026">48%</strong>
-        <div class="score-track" aria-hidden="true"><span id="bar-2026"></span></div>
+      <article class="metric-card">
+        <span class="metric-label">2026 playoff outlook</span>
+        <strong class="metric-value" id="score-2026">48%</strong>
+        <div class="meter"><span id="bar-2026"></span></div>
       </article>
-
-      <article class="score-card">
-        <span class="score-label">2027 roster outlook</span>
-        <strong class="score-number" id="score-2027">61%</strong>
-        <div class="score-track" aria-hidden="true"><span id="bar-2027"></span></div>
+      <article class="metric-card">
+        <span class="metric-label">2027 roster outlook</span>
+        <strong class="metric-value" id="score-2027">61%</strong>
+        <div class="meter"><span id="bar-2027"></span></div>
       </article>
-
-      <article class="score-card">
-        <span class="score-label">2028 future outlook</span>
-        <strong class="score-number" id="score-2028">66%</strong>
-        <div class="score-track" aria-hidden="true"><span id="bar-2028"></span></div>
+      <article class="metric-card">
+        <span class="metric-label">2028 future outlook</span>
+        <strong class="metric-value" id="score-2028">66%</strong>
+        <div class="meter"><span id="bar-2028"></span></div>
       </article>
     </section>
 
-    <main id="app" class="game-panel" aria-live="polite"></main>
+    <main id="app" class="game-card" aria-live="polite"></main>
 
-    <footer class="site-footer">
-      Hypothetical trade packages and editorial outlook scores are for discussion and entertainment.
+    <footer>
+      Hypothetical trades and editorial scores are for discussion and entertainment.
       They are not reported offers or projections.
     </footer>
   </div>
