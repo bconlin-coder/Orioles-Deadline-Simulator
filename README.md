@@ -82,3 +82,11 @@ The game now contains 20 possible trade scenarios. Each playthrough randomly las
 ## Replayable scenario deck
 
 At the start of each run, the game now draws one scenario from each major bucket: starting pitcher, back-end reliever, left-handed reliever, hitter and seller. A sixth call is drawn from the remaining pool in half of all games. The deck is shuffled, and any call made redundant by an accepted trade is replaced by another valid scenario. This prevents the priority system from repeatedly serving the same handful of trades.
+
+
+## Version 3 replayability fix
+
+- The selection pools now contain all 20 scenarios directly: five starters, seven relievers, four hitters and four seller decisions.
+- Each run draws one scenario from each major category, then fills the fifth and optional sixth slots from all remaining scenarios.
+- No player is restricted to fallback-only status.
+- The JavaScript file is now `game-v3.js`, which forces GitHub Pages and browsers to load the new engine instead of a cached older `script.js`.
