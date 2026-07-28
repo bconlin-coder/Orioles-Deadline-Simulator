@@ -90,3 +90,8 @@ At the start of each run, the game now draws one scenario from each major bucket
 - Each run draws one scenario from each major category, then fills the fifth and optional sixth slots from all remaining scenarios.
 - No player is restricted to fallback-only status.
 - The JavaScript file is now `game-v3.js`, which forces GitHub Pages and browsers to load the new engine instead of a cached older `script.js`.
+
+
+## Playoff-result correction (v4)
+
+The displayed season now uses the exact same randomized American League cut line as the 10,000-trial playoff model. Earlier builds calculated playoff probability with a variable cut line but labeled the displayed season using a separate fixed 86-win requirement. That mismatch has been removed. The baseline was also recalibrated to a .515 rest-of-season winning percentage so aggressive buying creates a meaningful, non-guaranteed October path.
