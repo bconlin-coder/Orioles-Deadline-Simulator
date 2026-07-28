@@ -3,6 +3,7 @@ const ORIOLES_TEAM_ID = 110;
 const SEASON = 2026;
 const SIMULATIONS = 10000;
 let MAX_CALLS = Math.random() < 0.5 ? 5 : 6;
+let sessionDealIds = [];
 
 /*
   modelImpact is the estimated marginal change in Baltimore's 2026 expected
@@ -550,6 +551,50 @@ const state = {
   started: false
 };
 
+const bucketIds = {
+  starter: ["joe-ryan", "logan-webb", "sandy-alcantara"],
+  backEnd: ["adrian-morejon", "luke-weaver", "kenley-jansen", "ryan-zeferjahn"],
+  lefty: ["brock-burke", "daniel-lynch", "steven-okert"],
+  bat: ["luis-arraez", "jung-hoo-lee", "isaac-paredes"],
+  seller: ["ward-sell", "kittredge-sell", "rogers-sell"]
+};
+
+function randomItem(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function shuffled(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function buildSessionDeck() {
+  const selected = [
+    randomItem(bucketIds.starter),
+    randomItem(bucketIds.backEnd),
+    randomItem(bucketIds.lefty),
+    randomItem(bucketIds.bat),
+    randomItem(bucketIds.seller)
+  ];
+
+  // Adley is a rare surprise seller call, replacing the ordinary seller slot.
+  if (Math.random() < 0.08) selected[4] = "rutschman-sell";
+
+  if (MAX_CALLS === 6) {
+    const flexPool = deals
+      .filter(deal => !selected.includes(deal.id) && deal.id !== "rutschman-sell")
+      .map(deal => deal.id);
+    selected.push(randomItem(flexPool));
+  }
+
+  sessionDealIds = shuffled(selected);
+}
+
+
 const app = document.getElementById("app");
 const recordEl = document.getElementById("record");
 const remainingEl = document.getElementById("remaining");
@@ -648,7 +693,7 @@ function isSellerPath() {
   return state.answers.length >= 3 && (netImpact() < 0.45 || declines >= 3);
 }
 
-function eligibleDeals() {
+function globallyEligibleDeals() {
   const filled = filledNeeds();
   const declined = declinedGroups();
   const callNumber = state.answers.length;
@@ -656,8 +701,6 @@ function eligibleDeals() {
   return deals.filter(deal => {
     if (state.seenIds.has(deal.id)) return false;
     if (deal.stageMin > callNumber) return false;
-    if (deal.sellerOnly && !isSellerPath()) return false;
-    if (deal.rare && Math.random() > 0.08) return false;
     if (deal.requiresDeclinedGroup && !declined.has(deal.requiresDeclinedGroup)) return false;
 
     if (deal.need in needMeta && filled.has(deal.need)) return false;
@@ -672,24 +715,28 @@ function eligibleDeals() {
 }
 
 function chooseNextDeal() {
-  const eligible = eligibleDeals();
-  if (!eligible.length) {
-    return deals.find(deal => deal.id === "final-push" && !state.seenIds.has(deal.id)) || null;
+  const eligible = globallyEligibleDeals();
+  if (!eligible.length) return null;
+
+  // First use the pre-drawn session deck. This creates genuinely different
+  // groups of calls on each playthrough instead of repeatedly favoring the
+  // same high-priority scenarios.
+  const deckCandidates = sessionDealIds
+    .map(id => eligible.find(deal => deal.id === id))
+    .filter(Boolean);
+
+  if (deckCandidates.length) return randomItem(deckCandidates);
+
+  // If a prior move invalidated a deck call, replace it with a random valid
+  // scenario so the player still receives five or six decisions.
+  const replacementPool = eligible.filter(deal => !sessionDealIds.includes(deal.id));
+  if (replacementPool.length) {
+    const replacement = randomItem(replacementPool);
+    sessionDealIds.push(replacement.id);
+    return replacement;
   }
 
-  const filled = filledNeeds();
-  const openNeeds = Object.keys(needMeta).filter(need => !filled.has(need));
-  const weighted = eligible.map(deal => {
-    let score = deal.priority;
-    if (openNeeds.includes(deal.need)) score += 4;
-    if (deal.secondaryNeed && openNeeds.includes(deal.secondaryNeed)) score += 3;
-    if (deal.sellerOnly && isSellerPath()) score += 5;
-    score += Math.random() * 3;
-    return { deal, score };
-  });
-
-  weighted.sort((a, b) => b.score - a.score);
-  return weighted[0].deal;
+  return randomItem(eligible);
 }
 
 function progressMarkup() {
@@ -715,6 +762,7 @@ function renderStart() {
   `;
   document.getElementById("start-btn").addEventListener("click", () => {
     state.started = true;
+    buildSessionDeck();
     renderIncoming();
   });
 }
@@ -1018,6 +1066,7 @@ function resetGame() {
   state.currentDeal = null;
   state.seenIds = new Set();
   state.started = true;
+  buildSessionDeck();
   updateHeader();
   renderIncoming();
 }

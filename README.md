@@ -77,3 +77,8 @@ All proposals and prospect packages are hypothetical and must not be described a
 ## Replay pool
 
 The game now contains 20 possible trade scenarios. Each playthrough randomly lasts five or six calls. The adaptive filter removes redundant targets after a roster need is filled and unlocks lower-cost alternatives after premium options are declined. Seller scenarios are limited to Taylor Ward, Andrew Kittredge, Trevor Rogers and a rare Adley Rutschman blockbuster.
+
+
+## Replayable scenario deck
+
+At the start of each run, the game now draws one scenario from each major bucket: starting pitcher, back-end reliever, left-handed reliever, hitter and seller. A sixth call is drawn from the remaining pool in half of all games. The deck is shuffled, and any call made redundant by an accepted trade is replaced by another valid scenario. This prevents the priority system from repeatedly serving the same handful of trades.
