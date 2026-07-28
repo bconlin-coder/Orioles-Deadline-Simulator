@@ -1,4 +1,4 @@
-# Can You Get the Orioles to October? — Adaptive build
+# Can you get the Orioles to October? — replayable build
 
 Upload these files to the root of the GitHub Pages repository:
 
@@ -72,3 +72,8 @@ The app requests the Orioles’ record from MLB’s public standings endpoint wh
 ## Editorial note
 
 All proposals and prospect packages are hypothetical and must not be described as reported offers. Before publication, editors can revise any deal language or `modelImpact` value directly in the `deals` array in `script.js`.
+
+
+## Replay pool
+
+The game now contains 20 possible trade scenarios. Each playthrough randomly lasts five or six calls. The adaptive filter removes redundant targets after a roster need is filled and unlocks lower-cost alternatives after premium options are declined. Seller scenarios are limited to Taylor Ward, Andrew Kittredge, Trevor Rogers and a rare Adley Rutschman blockbuster.

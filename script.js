@@ -2,7 +2,7 @@ const FALLBACK = { wins: 50, losses: 53 };
 const ORIOLES_TEAM_ID = 110;
 const SEASON = 2026;
 const SIMULATIONS = 10000;
-const MAX_CALLS = 6;
+let MAX_CALLS = Math.random() < 0.5 ? 5 : 6;
 
 /*
   modelImpact is the estimated marginal change in Baltimore's 2026 expected
@@ -12,197 +12,526 @@ const MAX_CALLS = 6;
 */
 const deals = [
   {
-    id: "joe-ryan",
-    need: "starter",
-    group: "starter",
-    priority: 10,
-    stageMin: 0,
-    city: "Minnesota",
-    player: "Joe Ryan",
-    type: "Buy",
-    time: "July 29 · 10:18 a.m.",
-    about: "Ryan would give Baltimore a dependable, high-strikeout starter for the stretch run and another controllable rotation piece beyond 2026.",
-    offer: ["Orioles receive RHP Joe Ryan", "Twins receive an MLB-ready young player and two premium prospects"],
-    hard: "The rotation has performed well, so Baltimore would be paying a major prospect price to improve a relative strength.",
-    question: "Do you pay a premium for a frontline starter?",
-    accept: "Acquire Ryan",
-    decline: "Pass on Ryan",
-    fills: ["starter"],
-    modelImpact: 1.05,
-    acceptedSummary: "Acquired Joe Ryan",
-    declinedSummary: "Declined Minnesota’s price for Joe Ryan"
+    "id": "joe-ryan",
+    "need": "starter",
+    "group": "starter",
+    "priority": 10,
+    "stageMin": 0,
+    "city": "Minnesota",
+    "player": "Joe Ryan",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A controllable, high-strikeout starter who would raise the rotation’s October ceiling.",
+    "offer": [
+      "Orioles receive RHP Joe Ryan",
+      "Twins receive an MLB-ready young player and two premium prospects"
+    ],
+    "hard": "The talent is obvious, but the prospect cost would be the largest of your deadline.",
+    "question": "Do you pay the premium for a frontline starter?",
+    "accept": "Acquire Ryan",
+    "decline": "Pass on Ryan",
+    "fills": [
+      "starter"
+    ],
+    "modelImpact": 1.05,
+    "acceptedSummary": "Acquired Joe Ryan",
+    "declinedSummary": "Passed on Joe Ryan"
   },
   {
-    id: "reid-detmers",
-    need: "starter",
-    group: "starter",
-    priority: 7,
-    stageMin: 2,
-    requiresDeclinedGroup: "starter",
-    city: "Los Angeles",
-    player: "Reid Detmers",
-    type: "Buy",
-    time: "July 30 · 9:14 a.m.",
-    about: "Detmers offers left-handed upside and multiple years of control, but his performance has been less predictable than Ryan’s.",
-    offer: ["Orioles receive LHP Reid Detmers", "Angels receive two prospects ranked among Baltimore’s top 15"],
-    hard: "This is a bet on traits and team control rather than a guaranteed October ace.",
-    question: "After passing on the premium starter, do you bet on Detmers?",
-    accept: "Acquire Detmers",
-    decline: "Keep the prospects",
-    fills: ["starter"],
-    modelImpact: 0.75,
-    acceptedSummary: "Acquired Reid Detmers",
-    declinedSummary: "Passed on Reid Detmers"
+    "id": "logan-webb",
+    "need": "starter",
+    "group": "starter",
+    "priority": 10,
+    "stageMin": 0,
+    "city": "San Francisco",
+    "player": "Logan Webb",
+    "type": "Blockbuster",
+    "time": "Deadline week",
+    "about": "A durable frontline starter who could lead the rotation now and beyond this season.",
+    "offer": [
+      "Orioles receive RHP Logan Webb",
+      "Giants receive a young major leaguer and three premium prospects"
+    ],
+    "hard": "This would be a franchise-shaping prospect package, not a normal deadline rental.",
+    "question": "Do you make the blockbuster offer?",
+    "accept": "Acquire Webb",
+    "decline": "Walk away",
+    "fills": [
+      "starter"
+    ],
+    "modelImpact": 1.2,
+    "acceptedSummary": "Acquired Logan Webb",
+    "declinedSummary": "Passed on Logan Webb"
   },
   {
-    id: "adrian-morejon",
-    need: "backEnd",
-    secondaryNeed: "lefty",
-    group: "premium-relief",
-    priority: 10,
-    stageMin: 0,
-    city: "San Diego",
-    player: "Adrián Morejón",
-    type: "Buy",
-    time: "July 29 · 2:41 p.m.",
-    about: "Morejón is the rare reliever who could address both of Baltimore’s bullpen problems: late-inning quality and a trusted left-handed matchup option.",
-    offer: ["Orioles receive LHP Adrián Morejón", "Padres receive a top-10 Orioles prospect and a young major league reliever"],
-    hard: "A two-for-one solution is valuable, but San Diego knows Baltimore is trying to fill two needs with one move.",
-    question: "Do you pay extra for one reliever who can solve two problems?",
-    accept: "Acquire Morejón",
-    decline: "Reject the price",
-    fills: ["backEnd", "lefty"],
-    modelImpact: 0.65,
-    acceptedSummary: "Acquired Adrián Morejón",
-    declinedSummary: "Passed on Adrián Morejón"
+    "id": "sandy-alcantara",
+    "need": "starter",
+    "group": "starter",
+    "priority": 9,
+    "stageMin": 0,
+    "city": "Miami",
+    "player": "Sandy Alcantara",
+    "type": "Blockbuster",
+    "time": "Deadline week",
+    "about": "A former Cy Young Award winner with ace-level upside and more volatility than the safest targets.",
+    "offer": [
+      "Orioles receive RHP Sandy Alcantara",
+      "Marlins receive two top prospects and a young pitcher"
+    ],
+    "hard": "You would be buying ceiling while accepting health and performance risk.",
+    "question": "Do you bet on Alcantara’s upside?",
+    "accept": "Acquire Alcantara",
+    "decline": "Reject the gamble",
+    "fills": [
+      "starter"
+    ],
+    "modelImpact": 0.95,
+    "acceptedSummary": "Acquired Sandy Alcantara",
+    "declinedSummary": "Passed on Sandy Alcantara"
   },
   {
-    id: "luke-weaver",
-    need: "backEnd",
-    group: "back-end",
-    priority: 8,
-    stageMin: 1,
-    city: "New York",
-    player: "Luke Weaver",
-    type: "Buy",
-    time: "July 30 · 11:22 a.m.",
-    about: "Weaver would add a proven late-inning right-hander without requiring the blockbuster return demanded for the top relief targets.",
-    offer: ["Orioles receive RHP Luke Weaver", "Mets receive a near-major-league position prospect"],
-    hard: "Weaver helps the ninth inning, but acquiring him would still leave Baltimore without a dependable left-handed reliever.",
-    question: "Do you make a targeted move for the back of the bullpen?",
-    accept: "Acquire Weaver",
-    decline: "End talks",
-    fills: ["backEnd"],
-    modelImpact: 0.35,
-    acceptedSummary: "Acquired Luke Weaver",
-    declinedSummary: "Passed on Luke Weaver"
+    "id": "reid-detmers",
+    "need": "starter",
+    "group": "starter",
+    "priority": 7,
+    "stageMin": 2,
+    "city": "Los Angeles",
+    "player": "Reid Detmers",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A left-handed starter with swing-and-miss traits and multiple years of control.",
+    "offer": [
+      "Orioles receive LHP Reid Detmers",
+      "Angels receive two top-15 Orioles prospects"
+    ],
+    "hard": "This is a traits-and-control bet rather than a guaranteed October ace.",
+    "question": "Do you buy low on Detmers?",
+    "accept": "Acquire Detmers",
+    "decline": "Keep the prospects",
+    "fills": [
+      "starter"
+    ],
+    "modelImpact": 0.7,
+    "acceptedSummary": "Acquired Reid Detmers",
+    "declinedSummary": "Passed on Reid Detmers",
+    "requiresDeclinedGroup": "starter"
   },
   {
-    id: "brock-burke",
-    need: "lefty",
-    group: "lefty",
-    priority: 8,
-    stageMin: 2,
-    city: "Cincinnati",
-    player: "Brock Burke",
-    type: "Buy",
-    time: "July 30 · 4:03 p.m.",
-    about: "Burke would give Baltimore a dedicated left-handed relief option for the difficult lefty pockets it could encounter in October.",
-    offer: ["Orioles receive LHP Brock Burke", "Reds receive a Double-A pitcher"],
-    hard: "This is a narrower upgrade than Morejón. Burke fills one specific role rather than transforming the entire bullpen.",
-    question: "Do you spend prospect capital on a specialist?",
-    accept: "Acquire Burke",
-    decline: "Trust the current lefties",
-    fills: ["lefty"],
-    modelImpact: 0.25,
-    acceptedSummary: "Acquired Brock Burke",
-    declinedSummary: "Passed on Brock Burke"
+    "id": "michael-wacha",
+    "need": "starter",
+    "group": "starter",
+    "priority": 6,
+    "stageMin": 2,
+    "city": "Kansas City",
+    "player": "Michael Wacha",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A veteran starter who would add stability and protect the rotation against injury.",
+    "offer": [
+      "Orioles receive RHP Michael Wacha",
+      "Royals receive two mid-level prospects"
+    ],
+    "hard": "This is depth and reliability, not the frontline upgrade you originally wanted.",
+    "question": "Do you settle for rotation insurance?",
+    "accept": "Acquire Wacha",
+    "decline": "Pass on Wacha",
+    "fills": [
+      "starter"
+    ],
+    "modelImpact": 0.4,
+    "acceptedSummary": "Acquired Michael Wacha",
+    "declinedSummary": "Passed on Michael Wacha",
+    "requiresDeclinedGroup": "starter"
   },
   {
-    id: "luis-arraez",
-    need: "bat",
-    group: "bat",
-    priority: 9,
-    stageMin: 1,
-    city: "San Francisco",
-    player: "Luis Arraez",
-    type: "Buy",
-    time: "July 30 · 6:17 p.m.",
-    about: "Arraez would add contact, on-base ability and another option at second base to a lineup carrying several everyday hitters below a .700 OPS.",
-    offer: ["Orioles receive 2B Luis Arraez", "Giants receive a top-15 prospect and a lower-level lottery ticket"],
-    hard: "Adding Arraez would force Baltimore to reduce playing time for young infielders it still needs to evaluate.",
-    question: "Do you trade future value for a steadier major league bat?",
-    accept: "Acquire Arraez",
-    decline: "Stay with the young infielders",
-    fills: ["bat"],
-    modelImpact: 0.7,
-    acceptedSummary: "Acquired Luis Arraez",
-    declinedSummary: "Passed on Luis Arraez"
+    "id": "adrian-morejon",
+    "need": "backEnd",
+    "group": "premium-relief",
+    "priority": 10,
+    "stageMin": 0,
+    "city": "San Diego",
+    "player": "Adrián Morejón",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A high-leverage left-hander who could address two bullpen needs with one roster spot.",
+    "offer": [
+      "Orioles receive LHP Adrián Morejón",
+      "Padres receive a top-10 prospect and a young major league reliever"
+    ],
+    "hard": "San Diego can demand a premium because Morejón solves both late-inning and left-handed needs.",
+    "question": "Do you pay extra for the two-for-one bullpen solution?",
+    "accept": "Acquire Morejón",
+    "decline": "Reject the price",
+    "fills": [
+      "backEnd",
+      "lefty"
+    ],
+    "modelImpact": 0.65,
+    "acceptedSummary": "Acquired Adrián Morejón",
+    "declinedSummary": "Passed on Adrián Morejón",
+    "secondaryNeed": "lefty"
   },
   {
-    id: "mickey-moniak",
-    need: "bat",
-    group: "bat",
-    priority: 6,
-    stageMin: 3,
-    requiresDeclinedGroup: "bat",
-    city: "Colorado",
-    player: "Mickey Moniak",
-    type: "Buy",
-    time: "July 31 · 9:08 a.m.",
-    about: "Moniak offers a less expensive way to improve the outfield without committing the prospect package required for the top hitters.",
-    offer: ["Orioles receive OF Mickey Moniak", "Rockies receive a Double-A pitcher and a lower-level prospect"],
-    hard: "The price is lower, but so is the certainty that Moniak meaningfully changes Baltimore’s offense.",
-    question: "After passing on the premium bat, do you make a smaller upgrade?",
-    accept: "Acquire Moniak",
-    decline: "Stand pat on offense",
-    fills: ["bat"],
-    modelImpact: 0.4,
-    acceptedSummary: "Acquired Mickey Moniak",
-    declinedSummary: "Passed on Mickey Moniak"
+    "id": "luke-weaver",
+    "need": "backEnd",
+    "group": "back-end",
+    "priority": 8,
+    "stageMin": 1,
+    "city": "New York",
+    "player": "Luke Weaver",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A proven late-inning right-hander who could immediately handle leverage innings.",
+    "offer": [
+      "Orioles receive RHP Luke Weaver",
+      "New York receives a near-major-league position prospect"
+    ],
+    "hard": "He helps the back end but does not solve the need for a trusted left-hander.",
+    "question": "Do you make the targeted bullpen upgrade?",
+    "accept": "Acquire Weaver",
+    "decline": "End talks",
+    "fills": [
+      "backEnd"
+    ],
+    "modelImpact": 0.35,
+    "acceptedSummary": "Acquired Luke Weaver",
+    "declinedSummary": "Passed on Luke Weaver"
   },
   {
-    id: "ward-sell",
-    need: "sell",
-    group: "sell",
-    priority: 8,
-    stageMin: 3,
-    sellerOnly: true,
-    city: "Seattle",
-    player: "Taylor Ward",
-    type: "Sell",
-    time: "July 31 · 11:36 a.m.",
-    about: "Seattle wants Ward’s on-base ability and middle-of-the-order experience. The offer would replenish Baltimore’s system but weaken the current lineup.",
-    offer: ["Mariners receive OF/DH Taylor Ward", "Orioles receive a Double-A starter and a high-upside infield prospect"],
-    hard: "Accepting would mean pivoting toward the future while the Orioles remain within reach of a wild-card spot.",
-    question: "Has your deadline stalled enough to justify selling?",
-    accept: "Trade Ward",
-    decline: "Keep Ward",
-    fills: [],
-    modelImpact: -0.85,
-    acceptedSummary: "Traded Taylor Ward for two prospects",
-    declinedSummary: "Kept Taylor Ward for the playoff push"
+    "id": "kenley-jansen",
+    "need": "backEnd",
+    "group": "back-end",
+    "priority": 7,
+    "stageMin": 1,
+    "city": "Los Angeles",
+    "player": "Kenley Jansen",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A veteran closer with extensive high-leverage and postseason experience.",
+    "offer": [
+      "Orioles receive RHP Kenley Jansen",
+      "Angels receive a mid-level pitching prospect"
+    ],
+    "hard": "You would be paying for certainty and experience rather than long-term control.",
+    "question": "Do you add the veteran closer?",
+    "accept": "Acquire Jansen",
+    "decline": "Pass on Jansen",
+    "fills": [
+      "backEnd"
+    ],
+    "modelImpact": 0.3,
+    "acceptedSummary": "Acquired Kenley Jansen",
+    "declinedSummary": "Passed on Kenley Jansen"
   },
   {
-    id: "final-push",
-    need: "flex",
-    group: "flex",
-    priority: 4,
-    stageMin: 4,
-    city: "Kansas City",
-    player: "Michael Wacha",
-    type: "Buy",
-    time: "July 31 · 5:41 p.m.",
-    about: "Wacha is not the ace Baltimore initially sought, but he would deepen the rotation and protect the club against an injury during the stretch run.",
-    offer: ["Orioles receive RHP Michael Wacha", "Royals receive two mid-level prospects"],
-    hard: "This is depth rather than a headline move, and the rotation may already be the strongest part of the roster.",
-    question: "Do you use your final prospect capital on rotation insurance?",
-    accept: "Acquire Wacha",
-    decline: "Close the deadline",
-    fills: [],
-    modelImpact: 0.35,
-    acceptedSummary: "Acquired Michael Wacha",
-    declinedSummary: "Passed on Michael Wacha"
+    "id": "ryan-zeferjahn",
+    "need": "backEnd",
+    "group": "back-end",
+    "priority": 7,
+    "stageMin": 1,
+    "city": "Los Angeles",
+    "player": "Ryan Zeferjahn",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A power reliever with team control who could grow into a larger late-inning role.",
+    "offer": [
+      "Orioles receive RHP Ryan Zeferjahn",
+      "Angels receive two lower-level prospects"
+    ],
+    "hard": "The price reflects future control even though he is less established than the veteran options.",
+    "question": "Do you pay for the controllable reliever?",
+    "accept": "Acquire Zeferjahn",
+    "decline": "Pass on Zeferjahn",
+    "fills": [
+      "backEnd"
+    ],
+    "modelImpact": 0.32,
+    "acceptedSummary": "Acquired Ryan Zeferjahn",
+    "declinedSummary": "Passed on Ryan Zeferjahn"
+  },
+  {
+    "id": "brock-burke",
+    "need": "lefty",
+    "group": "lefty",
+    "priority": 8,
+    "stageMin": 1,
+    "city": "Cincinnati",
+    "player": "Brock Burke",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A dedicated left-handed relief option for difficult matchup pockets.",
+    "offer": [
+      "Orioles receive LHP Brock Burke",
+      "Reds receive a Double-A pitcher"
+    ],
+    "hard": "This fills a narrow role rather than transforming the entire bullpen.",
+    "question": "Do you spend prospect capital on the lefty specialist?",
+    "accept": "Acquire Burke",
+    "decline": "Trust the current lefties",
+    "fills": [
+      "lefty"
+    ],
+    "modelImpact": 0.25,
+    "acceptedSummary": "Acquired Brock Burke",
+    "declinedSummary": "Passed on Brock Burke"
+  },
+  {
+    "id": "daniel-lynch",
+    "need": "lefty",
+    "group": "lefty",
+    "priority": 7,
+    "stageMin": 1,
+    "city": "Kansas City",
+    "player": "Daniel Lynch IV",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A multi-inning left-hander who could cover matchups and provide length.",
+    "offer": [
+      "Orioles receive LHP Daniel Lynch IV",
+      "Royals receive a young position prospect"
+    ],
+    "hard": "His versatility is useful, but his role may overlap with pitchers already on the roster.",
+    "question": "Do you add the versatile left-hander?",
+    "accept": "Acquire Lynch",
+    "decline": "Pass on Lynch",
+    "fills": [
+      "lefty"
+    ],
+    "modelImpact": 0.28,
+    "acceptedSummary": "Acquired Daniel Lynch IV",
+    "declinedSummary": "Passed on Daniel Lynch IV"
+  },
+  {
+    "id": "steven-okert",
+    "need": "lefty",
+    "group": "lefty",
+    "priority": 6,
+    "stageMin": 2,
+    "city": "Chicago",
+    "player": "Steven Okert",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A lower-cost veteran lefty who could be deployed against specific matchup pockets.",
+    "offer": [
+      "Orioles receive LHP Steven Okert",
+      "Cubs receive a lower-level prospect"
+    ],
+    "hard": "The acquisition cost is modest, but so is the projected upgrade.",
+    "question": "Do you make the smaller lefty move?",
+    "accept": "Acquire Okert",
+    "decline": "Stand pat",
+    "fills": [
+      "lefty"
+    ],
+    "modelImpact": 0.18,
+    "acceptedSummary": "Acquired Steven Okert",
+    "declinedSummary": "Passed on Steven Okert"
+  },
+  {
+    "id": "luis-arraez",
+    "need": "bat",
+    "group": "bat",
+    "priority": 9,
+    "stageMin": 1,
+    "city": "San Francisco",
+    "player": "Luis Arraez",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "An elite contact hitter who would lengthen the lineup and add infield flexibility.",
+    "offer": [
+      "Orioles receive INF Luis Arraez",
+      "Giants receive a top-15 prospect and a lower-level lottery ticket"
+    ],
+    "hard": "Adding him would reduce opportunities for young infielders Baltimore still needs to evaluate.",
+    "question": "Do you trade future value for a steadier bat?",
+    "accept": "Acquire Arraez",
+    "decline": "Stay with the young hitters",
+    "fills": [
+      "bat"
+    ],
+    "modelImpact": 0.7,
+    "acceptedSummary": "Acquired Luis Arraez",
+    "declinedSummary": "Passed on Luis Arraez"
+  },
+  {
+    "id": "jung-hoo-lee",
+    "need": "bat",
+    "group": "bat",
+    "priority": 9,
+    "stageMin": 1,
+    "city": "San Francisco",
+    "player": "Jung Hoo Lee",
+    "type": "Blockbuster",
+    "time": "Deadline week",
+    "about": "A contact-oriented center fielder whose defense and on-base skills could improve multiple parts of the club.",
+    "offer": [
+      "Orioles receive OF Jung Hoo Lee",
+      "Giants receive a premium prospect package"
+    ],
+    "hard": "The contract and acquisition cost would make this more than a short-term deadline move.",
+    "question": "Do you make the long-term bet on Lee?",
+    "accept": "Acquire Lee",
+    "decline": "Reject the price",
+    "fills": [
+      "bat"
+    ],
+    "modelImpact": 0.8,
+    "acceptedSummary": "Acquired Jung Hoo Lee",
+    "declinedSummary": "Passed on Jung Hoo Lee"
+  },
+  {
+    "id": "isaac-paredes",
+    "need": "bat",
+    "group": "bat",
+    "priority": 8,
+    "stageMin": 1,
+    "city": "Houston",
+    "player": "Isaac Paredes",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A right-handed power bat with defensive flexibility around the infield.",
+    "offer": [
+      "Orioles receive INF Isaac Paredes",
+      "Astros receive two top-15 prospects"
+    ],
+    "hard": "The fit is strong, but Houston would be reluctant to help another American League contender cheaply.",
+    "question": "Do you pay the intraleague premium?",
+    "accept": "Acquire Paredes",
+    "decline": "Pass on Paredes",
+    "fills": [
+      "bat"
+    ],
+    "modelImpact": 0.65,
+    "acceptedSummary": "Acquired Isaac Paredes",
+    "declinedSummary": "Passed on Isaac Paredes"
+  },
+  {
+    "id": "mickey-moniak",
+    "need": "bat",
+    "group": "bat",
+    "priority": 6,
+    "stageMin": 2,
+    "city": "Colorado",
+    "player": "Mickey Moniak",
+    "type": "Buy",
+    "time": "Deadline week",
+    "about": "A less expensive outfield upgrade with power and platoon value.",
+    "offer": [
+      "Orioles receive OF Mickey Moniak",
+      "Rockies receive a Double-A pitcher and a lower-level prospect"
+    ],
+    "hard": "The price is lower, but so is the certainty that he meaningfully changes the offense.",
+    "question": "Do you make the smaller offensive upgrade?",
+    "accept": "Acquire Moniak",
+    "decline": "Stand pat on offense",
+    "fills": [
+      "bat"
+    ],
+    "modelImpact": 0.4,
+    "acceptedSummary": "Acquired Mickey Moniak",
+    "declinedSummary": "Passed on Mickey Moniak",
+    "requiresDeclinedGroup": "bat"
+  },
+  {
+    "id": "ward-sell",
+    "need": "sell",
+    "group": "sell",
+    "priority": 8,
+    "stageMin": 3,
+    "city": "Seattle",
+    "player": "Taylor Ward",
+    "type": "Sell",
+    "time": "Deadline week",
+    "about": "A contender wants Ward’s on-base ability and middle-of-the-order experience.",
+    "offer": [
+      "Mariners receive OF/DH Taylor Ward",
+      "Orioles receive a Double-A starter and a high-upside infield prospect"
+    ],
+    "hard": "Selling Ward would improve the system while weakening a team still within reach of October.",
+    "question": "Do you cash in on Ward?",
+    "accept": "Trade Ward",
+    "decline": "Keep Ward",
+    "fills": [],
+    "modelImpact": -0.85,
+    "acceptedSummary": "Traded Taylor Ward",
+    "declinedSummary": "Kept Taylor Ward",
+    "sellerOnly": true
+  },
+  {
+    "id": "kittredge-sell",
+    "need": "sell",
+    "group": "sell",
+    "priority": 7,
+    "stageMin": 3,
+    "city": "Los Angeles",
+    "player": "Andrew Kittredge",
+    "type": "Sell",
+    "time": "Deadline week",
+    "about": "A contender offers future value for a veteran reliever who could help in October.",
+    "offer": [
+      "Dodgers receive RHP Andrew Kittredge",
+      "Orioles receive two pitching prospects"
+    ],
+    "hard": "Moving him makes sense for the future but directly deepens the bullpen problem.",
+    "question": "Do you sell the veteran reliever?",
+    "accept": "Trade Kittredge",
+    "decline": "Keep Kittredge",
+    "fills": [],
+    "modelImpact": -0.4,
+    "acceptedSummary": "Traded Andrew Kittredge",
+    "declinedSummary": "Kept Andrew Kittredge",
+    "sellerOnly": true
+  },
+  {
+    "id": "rogers-sell",
+    "need": "sell",
+    "group": "sell",
+    "priority": 8,
+    "stageMin": 3,
+    "city": "Chicago",
+    "player": "Trevor Rogers",
+    "type": "Sell",
+    "time": "Deadline week",
+    "about": "A contender is willing to pay for a controllable starter after a strong stretch.",
+    "offer": [
+      "Cubs receive LHP Trevor Rogers",
+      "Orioles receive a premium position prospect and a young pitcher"
+    ],
+    "hard": "Selling high could reshape the farm system, but it removes rotation quality from the present club.",
+    "question": "Do you move Rogers for the prospect haul?",
+    "accept": "Trade Rogers",
+    "decline": "Keep Rogers",
+    "fills": [],
+    "modelImpact": -0.75,
+    "acceptedSummary": "Traded Trevor Rogers",
+    "declinedSummary": "Kept Trevor Rogers",
+    "sellerOnly": true
+  },
+  {
+    "id": "rutschman-sell",
+    "need": "sell",
+    "group": "sell",
+    "priority": 5,
+    "stageMin": 4,
+    "city": "Boston",
+    "player": "Adley Rutschman",
+    "type": "Blockbuster",
+    "time": "Deadline week",
+    "about": "A rival makes a franchise-altering offer for Baltimore’s star catcher.",
+    "offer": [
+      "Red Sox receive C Adley Rutschman",
+      "Orioles receive three premium young players and additional prospect depth"
+    ],
+    "hard": "This is not a normal deadline trade. It changes the identity and timeline of the franchise.",
+    "question": "Do you accept the overwhelming offer for Rutschman?",
+    "accept": "Trade Rutschman",
+    "decline": "End the conversation",
+    "fills": [],
+    "modelImpact": -1.5,
+    "acceptedSummary": "Traded Adley Rutschman in a blockbuster",
+    "declinedSummary": "Kept Adley Rutschman",
+    "sellerOnly": true,
+    "rare": true
   }
 ];
 
@@ -328,6 +657,7 @@ function eligibleDeals() {
     if (state.seenIds.has(deal.id)) return false;
     if (deal.stageMin > callNumber) return false;
     if (deal.sellerOnly && !isSellerPath()) return false;
+    if (deal.rare && Math.random() > 0.08) return false;
     if (deal.requiresDeclinedGroup && !declined.has(deal.requiresDeclinedGroup)) return false;
 
     if (deal.need in needMeta && filled.has(deal.need)) return false;
@@ -683,6 +1013,7 @@ function renderResults(model) {
 }
 
 function resetGame() {
+  MAX_CALLS = Math.random() < 0.5 ? 5 : 6;
   state.answers = [];
   state.currentDeal = null;
   state.seenIds = new Set();
