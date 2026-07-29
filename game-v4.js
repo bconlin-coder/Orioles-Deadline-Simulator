@@ -202,14 +202,14 @@ const deals = [
     "group": "back-end",
     "priority": 7,
     "stageMin": 0,
-    "city": "Los Angeles",
+    "city": "Detroit",
     "player": "Kenley Jansen",
     "type": "Buy",
     "time": "Deadline week",
     "about": "A veteran closer with extensive high-leverage and postseason experience.",
     "offer": [
       "Orioles receive RHP Kenley Jansen",
-      "Angels receive a mid-level pitching prospect"
+      "Tigers receive a mid-level pitching prospect"
     ],
     "hard": "You would be paying for certainty and experience rather than long-term control.",
     "question": "Do you add the veteran closer?",
